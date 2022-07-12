@@ -6,8 +6,8 @@ import createCode from "../helpers/createCodeVerify";
 import { transporter } from "../helpers/sendEmail"; 
 
 const prisma = new PrismaClient();
-const defaultEmailSendInfoEcommerce:string = process.env.EMAIL_INFO_ECOMMERCE || '';
-console.log(defaultEmailSendInfoEcommerce)
+//const defaultEmailSendInfoEcommerce:string = process.env.EMAIL_INFO_ECOMMERCE || '';
+
 const createItemVerifyEmail = async (req:Request, res:Response) => {
 
     const  { email } = req.body
@@ -32,7 +32,7 @@ const createItemVerifyEmail = async (req:Request, res:Response) => {
             });
     
             res.status(200).json({
-                response : 'success',
+                response : true,
                 message: 'Codigo de verificación enviado'
             });
         }else{
@@ -52,13 +52,50 @@ const createItemVerifyEmail = async (req:Request, res:Response) => {
         }
 
         await transporter.sendMail({
-            from: "honbermudezpa98@gmail.com",
             to: email,
             subject: "Código de verificación de correo ecommerce",
-            html: `<style>
-                        .code-verify{color: red;}
+            html: `<html>
+                    <head>
+                    <style>
+                        .principal{
+                            width:100%;
+                            display: flex;
+							justify-content: center;
+							align-items: center;
+                        }
+                        .content-mail{
+                            width: 20em;
+                            background-color: #94CDFA;
+                        }
+                        p{
+                            color:#000000;
+                            font-size:15px;
+                            padding:10px;
+                        }
+                        section{
+                            text-align: center;
+                        }
+                        span{
+                            padding: 0 20px;
+                            color:#000000;
+                            font-size:38px;
+                            border: 1px solid #000000;
+                            border-radius: 5px;
+                            background-color:#269EFB;
+                        }
                     </style>
-                    <p class='code-verify'>${code_verify}</p> `
+                    </head>
+                    <body>
+                        <div class="principal">
+                            <div class="content-mail">
+                                <p>A continución su código de verificación de e-mail</p>
+                                <section>
+                                    <span>${code_verify}</span>
+                                </section>
+                            </div>
+                        </div>
+                    </body>
+                    </html>`
         });
         
 
