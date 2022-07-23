@@ -1,6 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import routerVerifyEmail from './routes/registerEmailRoutes'
+import regiterEmail from './routes/registerEmailRoutes'
 
 
 //Varibles
@@ -13,10 +13,10 @@ app.use(express.json());
 
 
 //Routes
-app.use(routerVerifyEmail);
+app.use(regiterEmail);
 
 
 
 app.listen(PORT, () => {
- console.log( ` Server running on port ${PORT}`);
+ console.log( `Server running on port ${PORT}`);
 });

@@ -11,11 +11,57 @@ datasource db {
 }
 
 model RegisterEmail {
+  @@map(name : "register_email")
   id Int @id @default(autoincrement())
   code_verify Int @unique
   email String @unique
   token String @unique
   validated Boolean @default(false)
-  createAt DateTime @default(now())
+  create_at DateTime @default(now())
+  update_at DateTime? @updatedAt
 }
 
+model Categories {
+  @@map(name : "categories")
+  id Int @id @default(autoincrement())
+  name String @db.VarChar(100)
+  create_at DateTime @default(now())
+  update_at DateTime? @updatedAt
+  subcategories SubCategories[]
+}
+
+model Brands {
+  @@map(name :"brands")
+  id Int @id @default(autoincrement())
+  name String @db.VarChar(100)
+  create_at DateTime @default(now())
+  update_at DateTime? @updatedAt
+  products Products[]
+}
+
+
+model SubCategories {
+  @@map(name: "subcategories")
+  id Int @id @default(autoincrement())
+  name String @db.VarChar(100)
+  category Categories @relation(fields: [category_id], references: [id])
+  category_id Int
+  create_at DateTime @default(now())
+  update_at DateTime? @updatedAt
+  produst Products[]
+}
+
+model Products {
+  @@map(name : "products")
+  id Int @id @default(autoincrement())
+  brand Brands @relation(fields: [brand_id], references: [id])
+  brand_id Int
+  subcategory SubCategories @relation(fields: [subcategory_id], references: [id])
+  subcategory_id Int
+  name String @db.VarChar(100)
+  description String @db.Text
+  price Float @db.Double
+  quantity Int
+  create_at DateTime @default(now())
+  update_at DateTime? @updatedAt
+}
