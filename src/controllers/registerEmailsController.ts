@@ -1,103 +1,115 @@
 import { Request, Response } from "express";
-import { registerEmailModel } from "../models/registerEmailModel";
-import { PrismaClient } from "@prisma/client";
-import { getTokenRegisterEmail } from "../helpers/generateToken";
-import createCode from "../helpers/createCodeVerify";
-import { transporter } from "../helpers/sendEmail"; 
+import { createRegisterEmailModel, registerEmailModel } from "../models/registerEmailModel";
+import { 
+        getResgisterEmail_Email,
+        createRegisterEmail, 
+        updateRegisterEmail_Email,
+        getResgisterEmail_Code,
+        updateRegisterEmail_Code
+} from "../services/registerEmailService";
+import { getTokenRegisterEmail, verifyToken } from "../helpers/generateToken";
+import { transporter } from "../helpers/sendEmail";
 
-const prisma = new PrismaClient();
-const registerEmail = async (req:Request, res:Response) => {
+export const registerEmail = async (req:Request, res:Response) => {
 
     const  { email } = req.body
     const token = await getTokenRegisterEmail(email);
-    const code_verify = await createCode();
+    const code_verify = await generateRandomCode();
 
-    const data:registerEmailModel = {
+    const data:createRegisterEmailModel = {
         email, 
         code_verify,
         token
     }
 
-    try {
+    const infoRegisterEmail = await getResgisterEmail_Email(email);
 
-        const getInfoEmail = await prisma.verifyEmail.findUnique({
-            where: { email }
-        })
+    if(!infoRegisterEmail){
+        const newRegisterEmail:registerEmailModel = await createRegisterEmail(data);
+        res.json({
+            response : true,
+            message: 'Codigo de verificación enviado.',
+            data: newRegisterEmail
+        });
+    }else{
+        const updateRegisterEmail = await updateRegisterEmail_Email(email, {code_verify, token, validated: false});
+        res.status(200).json({
+            response : true,
+            message: 'Codigo de verificación enviado nuevamente',
+            data: updateRegisterEmail
+        });
+    }
 
-        if(getInfoEmail?.email === undefined){
-            await prisma.verifyEmail.create({
-                data
-            });
+    await transporter.sendMail({
+        to: email,
+        subject: "Código de verificación de correo para e-commerce",
+        html: `<html>
+                <body>
+                     <div class="content-mail">
+                        <p>A continución su código de verificación de e-mail.</p>
+                        <section>
+                            <span>${code_verify}</span>
+                        </section>
+                    </div>
+                </body>
+                </html>`
+    });
+}
+
+type GenerateRandomCode = () => Promise<number>;
+
+const generateRandomCode:GenerateRandomCode = async () => {
     
-            res.status(200).json({
-                response : true,
-                message: 'Codigo de verificación enviado'
-            });
-        }else{
-            await prisma.verifyEmail.update({
-                where: { email },
-                data: { 
-                    code_verify, 
-                    token,
-                    validated: false
-                }
-            });
+    let randomCode:number = 0;
+    let codeDB:number = 0;
 
-            res.status(200).json({
-                response : true,
-                message: 'Codigo de verificación enviado nuevamente'
+    while(randomCode === codeDB){
+        randomCode = Math.floor((Math.random() * (9999 - 1000 + 1)) + 1000);//Random number between 9999 - 10000
+        const res = await getResgisterEmail_Code(randomCode);
+        codeDB = res?.code_verify === undefined ? 0 : res?.code_verify;
+    }
+    return randomCode;
+}
+
+export const verifyEmail = async (req:Request, res:Response) => {
+
+    const code:number =  Number(req.body.code);
+
+    const registerEmailData = await getResgisterEmail_Code(code);
+
+    if(registerEmailData){
+        const tokenVerify = await verifyToken(registerEmailData.token);
+        
+        if(tokenVerify !== null){
+            const updateRegisterEmail = await updateRegisterEmail_Code(code,{validated : true});
+            
+            if(updateRegisterEmail){
+                res.status(201);
+                res.json({
+                    response : true,
+                    message : 'Email verificado con exito.',
+                    data: updateRegisterEmail
+                });
+            }else{
+                res.status(500)
+                res.json({
+                    response : false,
+                    message : 'No se logo ejecutar la petición.',
+                });
+            }
+        }else{
+            res.status(401)
+            res.json({
+                response : false,
+                message: "Token expiro."
             });
         }
 
-        await transporter.sendMail({
-            to: email,
-            subject: "Código de verificación de correo",
-            html: `<html>
-                    <head>
-                    <style>
-                        .principal{
-                            width:100%;
-                            display: flex;
-							justify-content: center;
-							align-items: center;
-                        }
-                        .content-mail{
-                            width: 20em;
-                            background-color: #94CDFA;
-                        }
-                        p{
-                            color:#000000;
-                            font-size:15px;
-                            padding:10px;
-                        }
-                        section{
-                            text-align: center;
-                        }
-                        span{
-                            padding: 0 20px;
-                            color:#000000;
-                            font-size:38px;
-                            border: 1px solid #000000;
-                            border-radius: 5px;
-                            background-color:#269EFB;
-                        }
-                    </style>
-                    </head>
-                    <body>
-                        <div class="principal">
-                            <div class="content-mail">
-                                <p>A continución su código de verificación de e-mail</p>
-                                <section>
-                                    <span>${code_verify}</span>
-                                </section>
-                            </div>
-                        </div>
-                    </body>
-                    </html>`
+    }else{
+        res.status(403)
+        res.json({
+            response : false,
+            message : "Codigo no existe."
         });
-    }catch (error) {
-        res.status(500).send({error});
     }
 }
-
-export default registerEmail;
