@@ -6,4 +6,4 @@ export interface VerifyEmail{
     createAt: Date
 }
 
-export type CreateVerifyEmail = Omit<VerifyEmail, 'createAt' | 'id'>
+export type registerEmailModel = Omit<VerifyEmail, 'createAt' | 'id'>

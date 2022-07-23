@@ -1,6 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import routerVerifyEmail from '../src/routes/verifyEmail'
+import routerVerifyEmail from './routes/registerEmailRoutes'
 
 
 //Varibles

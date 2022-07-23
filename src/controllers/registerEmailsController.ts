@@ -1,20 +1,18 @@
 import { Request, Response } from "express";
-import { CreateVerifyEmail } from "../models/verifyEmails";
+import { registerEmailModel } from "../models/registerEmailModel";
 import { PrismaClient } from "@prisma/client";
-import { getTokenVerify } from "../helpers/generateToken";
+import { getTokenRegisterEmail } from "../helpers/generateToken";
 import createCode from "../helpers/createCodeVerify";
 import { transporter } from "../helpers/sendEmail"; 
 
 const prisma = new PrismaClient();
-//const defaultEmailSendInfoEcommerce:string = process.env.EMAIL_INFO_ECOMMERCE || '';
-
-const createItemVerifyEmail = async (req:Request, res:Response) => {
+const registerEmail = async (req:Request, res:Response) => {
 
     const  { email } = req.body
-    const token = await getTokenVerify(email);
+    const token = await getTokenRegisterEmail(email);
     const code_verify = await createCode();
 
-    const data:CreateVerifyEmail = {
+    const data:registerEmailModel = {
         email, 
         code_verify,
         token
@@ -53,7 +51,7 @@ const createItemVerifyEmail = async (req:Request, res:Response) => {
 
         await transporter.sendMail({
             to: email,
-            subject: "Código de verificación de correo ecommerce",
+            subject: "Código de verificación de correo",
             html: `<html>
                     <head>
                     <style>
@@ -97,11 +95,9 @@ const createItemVerifyEmail = async (req:Request, res:Response) => {
                     </body>
                     </html>`
         });
-        
-
     }catch (error) {
         res.status(500).send({error});
     }
 }
 
-export default createItemVerifyEmail;
+export default registerEmail;

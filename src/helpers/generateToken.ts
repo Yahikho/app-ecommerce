@@ -4,7 +4,7 @@ dotenv.config();
 
 const secretTK:string = 'SECRET_TOKEN';
 
-export const getTokenVerify = async (email:string) => {
+export const getTokenRegisterEmail = async (email:string) => {
     return jwt.sign(
         {
             email

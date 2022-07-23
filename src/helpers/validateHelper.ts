@@ -7,7 +7,10 @@ const validateResult = (req:Request, res:Response, next:any) => {
         return next()
     }catch(err:any){
         res.status(400)
-        res.send({errors : err.array() })
+        res.json({ 
+                response    : false, 
+                message     : 'Error en los parametros.',
+                errors      : err.array() })
     }
 }
 

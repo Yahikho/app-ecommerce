@@ -8,8 +8,7 @@ const verifyEmailCode = async (req:Request, res:Response) => {
 
     const code_verify:number =  Number(req.body.code);
     
-    try{
-        
+    try{   
         const getEmailToVerify = await prisma.verifyEmail.findUnique({
             where: { code_verify }
         });
