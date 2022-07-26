@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createRegisterEmailModel, registerEmailModel } from "../models/registerEmailModel";
+import { createRegisterEmailModel } from "../models/registerEmailModel";
 import { 
         getResgisterEmail_Email,
         createRegisterEmail, 
@@ -25,15 +25,15 @@ export const registerEmail = async (req:Request, res:Response) => {
     const infoRegisterEmail = await getResgisterEmail_Email(email);
 
     if(!infoRegisterEmail){
-        const newRegisterEmail:registerEmailModel = await createRegisterEmail(data);
-        res.json({
+        const newRegisterEmail:createRegisterEmailModel = await createRegisterEmail(data);
+        res.status(201).json({
             response : true,
             message: 'Codigo de verificación enviado.',
             data: newRegisterEmail
         });
     }else{
         const updateRegisterEmail = await updateRegisterEmail_Email(email, {code_verify, token, validated: false});
-        res.status(200).json({
+        res.status(201).json({
             response : true,
             message: 'Codigo de verificación enviado nuevamente',
             data: updateRegisterEmail

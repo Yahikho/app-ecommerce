@@ -3,14 +3,15 @@ export interface registerEmailModel{
     code_verify: number
     email: string
     token: string,
-    validated: boolean,
-    createAt: Date
+    validated: boolean
+    create_at: Date
+    update_at: Date
 }
 
-export type createRegisterEmailModel = Omit<registerEmailModel, 'validated' | 'createAt' | 'id'>
+export type createRegisterEmailModel = Omit<registerEmailModel, 'validated' | 'create_at' | 'id' | 'update_at'>
 
-export type updateRegisterEmailModel_Email = Omit<registerEmailModel, 'email' | 'createAt' | 'id'>
+export type updateRegisterEmailModel_Email = Omit<registerEmailModel, 'email' | 'create_at' | 'id' | 'update_at'>
 
-export type getRegisterEmail_code = Omit<registerEmailModel,'id' | 'email' | 'token' | 'validated' | 'createAt'>
+export type getRegisterEmail_code = Omit<registerEmailModel,'id' | 'email' | 'token' | 'validated' | 'create_at' | 'update_at'>
 
-export type updateRegisterEmailModel_Code = Omit<registerEmailModel,'id' | 'code_verify' | 'email' | 'token' | 'createAt'>
+export type updateRegisterEmailModel_Code = Omit<registerEmailModel,'id' | 'code_verify' | 'email' | 'token' | 'create_at' | 'update_at'>

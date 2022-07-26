@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { createRegisterEmailModel, updateRegisterEmailModel_Email ,updateRegisterEmailModel_Code} from "../models/registerEmailModel";
 
-const prisma = new PrismaClient();
+const prisma: PrismaClient = new PrismaClient();
 
 export const getResgisterEmail_Email = async (email:string) => {
 

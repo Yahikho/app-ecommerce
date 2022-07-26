@@ -1,7 +1,8 @@
-import express from 'express';
-import dotenv from 'dotenv';
-import regiterEmail from './routes/registerEmailRoutes'
-
+import express from "express";
+import dotenv from "dotenv";
+import regiterEmail from "./routes/registerEmailRoutes";
+import productosRouter from "./routes/productsRouter"; 
+import routerBrands from "./routes/brandsRouter";
 
 //Varibles
 dotenv.config();
@@ -14,7 +15,8 @@ app.use(express.json());
 
 //Routes
 app.use(regiterEmail);
-
+app.use(productosRouter);
+app.use(routerBrands)
 
 
 app.listen(PORT, () => {
