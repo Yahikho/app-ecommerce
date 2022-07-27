@@ -5,9 +5,9 @@ import validateResult from "../helpers/validateHelper";
 export const validateInputEmail = [
     body('email')
         .not().isEmpty()
-        .withMessage('Campo email imcompleto.')
+        .withMessage('Field email must not be empty.')
         .isEmail()
-        .withMessage('Valor ingresado no corresponde a un correo.'),
+        .withMessage('Field email must be email'),
     (req:Request, res:Response, next:any) => {
         validateResult(req,res,next);
     }
@@ -16,9 +16,9 @@ export const validateInputEmail = [
 export const validateInputCode = [
     body('code')
         .isNumeric()
-        .withMessage('El valor debe ser numercio.')
+        .withMessage('Field must be numeric.')
         .isLength({ min: 4, max: 4})
-        .withMessage('EL valor ingresado debe contener 4 carateres.'),
+        .withMessage('Number of characters must be 4'),
     (req:Request, res:Response, next:any) => {
         validateResult(req,res, next);
     }

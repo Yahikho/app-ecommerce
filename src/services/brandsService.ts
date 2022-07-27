@@ -14,8 +14,8 @@ export const getBrand = async (id: number): Promise<Brands[]> => {
     });
 }
 
-/*export const createNewBrand = async (): Promise<Brand> => {
+export const createNewBrand = async (data: Brands): Promise<Brands> => {
     return await prisma.brands.create({
         data
     });
-}*/
+}

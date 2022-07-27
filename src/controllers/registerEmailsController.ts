@@ -28,25 +28,25 @@ export const registerEmail = async (req:Request, res:Response) => {
         const newRegisterEmail:createRegisterEmailModel = await createRegisterEmail(data);
         res.status(201).json({
             response : true,
-            message: 'Codigo de verificación enviado.',
+            message: 'Verification code sent.',
             data: newRegisterEmail
         });
     }else{
         const updateRegisterEmail = await updateRegisterEmail_Email(email, {code_verify, token, validated: false});
         res.status(201).json({
             response : true,
-            message: 'Codigo de verificación enviado nuevamente',
+            message: 'Verification code sent again.',
             data: updateRegisterEmail
         });
     }
 
     await transporter.sendMail({
         to: email,
-        subject: "Código de verificación de correo para e-commerce",
+        subject: "Verification code email e-commerce",
         html: `<html>
                 <body>
                      <div class="content-mail">
-                        <p>A continución su código de verificación de e-mail.</p>
+                        <p>Below is your verification code for your email.</p>
                         <section>
                             <span>${code_verify}</span>
                         </section>
@@ -87,21 +87,21 @@ export const verifyEmail = async (req:Request, res:Response) => {
                 res.status(201);
                 res.json({
                     response : true,
-                    message : 'Email verificado con exito.',
+                    message : 'Email verified successfully.',
                     data: updateRegisterEmail
                 });
             }else{
                 res.status(500)
                 res.json({
                     response : false,
-                    message : 'No se logo ejecutar la petición.',
+                    message : 'An error ocurred with the response.',
                 });
             }
         }else{
             res.status(401)
             res.json({
                 response : false,
-                message: "Token expiro."
+                message: "Token expired."
             });
         }
 
@@ -109,7 +109,7 @@ export const verifyEmail = async (req:Request, res:Response) => {
         res.status(403)
         res.json({
             response : false,
-            message : "Codigo no existe."
+            message : "Verification code does not exist."
         });
     }
 }
