@@ -1,14 +1,13 @@
-import { PrismaClient } from "@prisma/client";
-import { Brand } from "../models/brandsModel";
+import { Brands, PrismaClient } from "@prisma/client";
 
 const prisma: PrismaClient = new PrismaClient();
 
-export const getAllBrands = async (): Promise<Brand[]> => {
+export const getAllBrands = async (): Promise<Brands[]> => {
     return await prisma.brands.findMany();
 }
 
-export const getBrand = async (id: number): Promise<any> => {
-    return await prisma.brands.findUnique({
+export const getBrand = async (id: number): Promise<Brands[]> => {
+    return await prisma.brands.findMany({
         where:{
             id
         }
