@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import { createRegisterEmailModel } from "../models/registerEmailModel";
 import { 
-        getResgisterEmail_Email,
+        getResgisterEmailByEmail,
         createRegisterEmail, 
-        updateRegisterEmail_Email,
-        getResgisterEmail_Code,
-        updateRegisterEmail_Code
+        updateRegisterEmailByEmail,
+        getResgisterEmailByCode,
+        updateRegisterEmailByCode
 } from "../services/registerEmailService";
 import { getTokenRegisterEmail, verifyToken } from "../helpers/generateToken";
 import { transporter } from "../helpers/sendEmail";
@@ -22,7 +22,7 @@ export const registerEmail = async (req:Request, res:Response) => {
         token
     }
 
-    const infoRegisterEmail = await getResgisterEmail_Email(email);
+    const infoRegisterEmail = await getResgisterEmailByEmail(email);
 
     if(!infoRegisterEmail){
         const newRegisterEmail:createRegisterEmailModel = await createRegisterEmail(data);
@@ -32,7 +32,7 @@ export const registerEmail = async (req:Request, res:Response) => {
             data: newRegisterEmail
         });
     }else{
-        const updateRegisterEmail = await updateRegisterEmail_Email(email, {code_verify, token, validated: false});
+        const updateRegisterEmail = await updateRegisterEmailByEmail(email, {code_verify, token, validated: false});
         res.status(201).json({
             response : true,
             message: 'Verification code sent again.',
@@ -65,7 +65,7 @@ const generateRandomCode:GenerateRandomCode = async () => {
 
     while(randomCode === codeDB){
         randomCode = Math.floor((Math.random() * (9999 - 1000 + 1)) + 1000);//Random number between 9999 - 10000
-        const res = await getResgisterEmail_Code(randomCode);
+        const res = await getResgisterEmailByCode(randomCode);
         codeDB = res?.code_verify === undefined ? 0 : res?.code_verify;
     }
     return randomCode;
@@ -75,13 +75,13 @@ export const verifyEmail = async (req:Request, res:Response) => {
 
     const code:number =  Number(req.body.code);
 
-    const registerEmailData = await getResgisterEmail_Code(code);
+    const registerEmailData = await getResgisterEmailByCode(code);
 
     if(registerEmailData){
         const tokenVerify = await verifyToken(registerEmailData.token);
         
         if(tokenVerify !== null){
-            const updateRegisterEmail = await updateRegisterEmail_Code(code,{validated : true});
+            const updateRegisterEmail = await updateRegisterEmailByCode(code,{validated : true});
             
             if(updateRegisterEmail){
                 res.status(201);
