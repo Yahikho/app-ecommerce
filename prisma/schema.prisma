@@ -33,7 +33,7 @@ model Categories {
 model Brands {
   @@map(name :"brands")
   id Int @id @default(autoincrement())
-  name String @db.VarChar(100)
+  name String @db.VarChar(100) @unique
   create_at DateTime @default(now())
   update_at DateTime? @updatedAt
   products Products[]
@@ -62,6 +62,15 @@ model Products {
   description String @db.Text
   price Float @db.Double
   quantity Int
+  create_at DateTime @default(now())
+  update_at DateTime? @updatedAt
+}
+
+model Clients{
+  @@map(name : "clients")
+  id Int @id @default(autoincrement())
+  email String @db.VarChar(100)
+  password String @db.VarChar(250)
   create_at DateTime @default(now())
   update_at DateTime? @updatedAt
 }

@@ -19,3 +19,28 @@ export const createNewBrand = async (data: Brands): Promise<Brands> => {
         data
     });
 }
+
+export const updateBrand = async (id: number, data: Brands): Promise<Brands> => {
+    return await prisma.brands.update({
+        where: {
+            id
+        },
+        data
+    });
+}
+
+export const deleteBrand = async (id: number): Promise<Brands> => {
+    return await prisma.brands.delete({
+        where:{
+            id
+        }
+    });
+}
+
+export const getBrandByName = async (name: string): Promise<Brands[]> => {
+    return await prisma.brands.findMany({
+        where:{
+            name
+        }
+    });
+}
