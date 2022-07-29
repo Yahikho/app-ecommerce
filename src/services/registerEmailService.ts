@@ -7,7 +7,7 @@ import {
 
 const prisma: PrismaClient = new PrismaClient();
 
-export const getResgisterEmailByEmail = async (email:string): Promise<RegisterEmail[]> => {
+export const getResgisterEmailByEmail = async (email: string): Promise<RegisterEmail[]> => {
     return await prisma.registerEmail.findMany({
         where: { email }
     });

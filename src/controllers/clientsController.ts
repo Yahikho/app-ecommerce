@@ -14,7 +14,6 @@ export const createClient = async (req: Request, res: Response) => {
                                             email : req.body.email,
                                             password : hashPassword
                                         };
-        
         const searchClient = await getClientByEmailService(data.email);
         if(searchClient.length > 0){
             res.status(200);
@@ -24,20 +23,27 @@ export const createClient = async (req: Request, res: Response) => {
             });
         }else{
             const registerEmail = await getResgisterEmailByEmailService(data.email);
-            if(registerEmail[0].validated){
-                const client = await createClientService(data);
-                res.status(201);
-                res.json({
-                    response: true,
-                    message: "Client created successfully.",
-                    data: client
-                });  
+            if(registerEmail.length > 0){
+                if(registerEmail[0].validated){
+                    await createClientService(data);
+                    res.status(201);
+                    res.json({
+                        response: true,
+                        message: "Client created successfully.",
+                    });  
+                }else{
+                    res.status(200);
+                    res.json({
+                        response: false,
+                        message: "E-mail has not been verified.",
+                    });
+                }
             }else{
                 res.status(200);
-                res.json({
-                    response: true,
-                    message: "E-mail has not been verified.",
-                });
+                    res.json({
+                        response: false,
+                        message: "E-mail has not been registered.",
+                    });
             }
         }
     }catch(Error){
